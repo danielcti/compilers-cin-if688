@@ -5,6 +5,8 @@ import java.util.*;
 class Solution {
   public int stacky(String[] tokens) {
     Token[] tokenList = tokenize(tokens);
+    System.out.println(Arrays.toString(tokenList));
+
     Stack<String> stack = new Stack<String>();
     int x, y;
     String result = "";
