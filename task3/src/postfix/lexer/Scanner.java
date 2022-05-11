@@ -34,7 +34,7 @@ public class Scanner {
 
 	/**
 	 * Scan the source program [as a String]
-	 * store the tokens as a List<Token> 
+	 * store the tokens as a List<Token>
 	 * 
 	 * @param program
 	 * @return the list of tokens
@@ -42,23 +42,23 @@ public class Scanner {
 	public List<Token> scan() {
 		return this.scan(this.source);
 	}
-	
+
 	/**
 	 * Scan the given program [as a String]
-	 * store the tokens as a List<Token> 
+	 * store the tokens as a List<Token>
 	 * 
 	 * @param program
 	 * @return the list of tokens
 	 */
 	public List<Token> scan(String program) {
-		StringTokenizer tokenizer = new StringTokenizer(program, Token.TOKENIZER_DELIMITER); 
+		StringTokenizer tokenizer = new StringTokenizer(program, Token.TOKENIZER_DELIMITER);
 		// processing each tokenized word
 		while (tokenizer.hasMoreElements()) {
 			String tokenStr = tokenizer.nextToken();
 			this.tokens.add(this.getToken(tokenStr));
 		}
 		this.tokens.add(new Token(TokenType.EOF, "")); // EOF
-		
+
 		return this.tokens;
 	}
 
@@ -68,14 +68,14 @@ public class Scanner {
 
 	private Token getToken(String token) {
 		Token ret = null;
-		if(Regex.isNum(token)) {
+		if (Regex.isNum(token)) {
 			ret = new Token(TokenType.NUM, token);
-		}
-		else if(Regex.isOP(token)) {
+		} else if (Regex.isOP(token)) {
 			ret = new Token(Regex.getOPTokenType(token), token);
-		}
-		else {
-			throw new LexError("Unexpected character: "+token);
+		} else if (Regex.isId(token)) {
+			ret = new Token(TokenType.ID, token);
+		} else {
+			throw new LexError("Unexpected character: " + token);
 		}
 		return ret;
 	}
