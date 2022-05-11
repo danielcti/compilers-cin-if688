@@ -26,14 +26,17 @@ public abstract class Expr {
 	// visitors for expressions
 	public interface Visitor<T> {
 		T visitNumberExpr(Number expr);
+
 		T visitBinopExpr(Binop expr);
+
+		T visitIdExpr(Id expr);
 	}
 
 	// Nested Expr classes here
 
 	// Number expression
 	public static class Number extends Expr {
-		public Number(String value){
+		public Number(String value) {
 			this.value = value;
 		}
 
@@ -61,6 +64,21 @@ public abstract class Expr {
 		public final Expr left;
 		public final Expr right;
 		public final Token operator;
+	}
+
+	// Variables expression
+	public static class Id extends Expr {
+		public Id(String lexeme) {
+			// System.out.println(lexeme);
+			this.id = lexeme;
+		}
+
+		@Override
+		public <T> T accept(Visitor<T> visitor) {
+			return visitor.visitIdExpr(this);
+		}
+
+		public final String id;
 	}
 
 	public abstract <T> T accept(Visitor<T> visitor);

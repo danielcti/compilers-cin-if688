@@ -4,8 +4,9 @@ import java.util.Stack;
 
 import postfix.ast.Expr.Binop;
 import postfix.ast.Expr.Number;
+import postfix.ast.Expr.Id;;
 
-public class AstPrinter implements Expr.Visitor<String>{
+public class AstPrinter implements Expr.Visitor<String> {
 
 	public String print(Expr expr) {
 		return expr.accept(this);
@@ -20,6 +21,11 @@ public class AstPrinter implements Expr.Visitor<String>{
 	public String visitBinopExpr(Binop expr) {
 		return parenthesizePreOrder(expr.operator.lexeme,
 				expr.left, expr.right);
+	}
+
+	@Override
+	public String visitIdExpr(Id expr) {
+		return expr.id.toString();
 	}
 
 	// -------------------------------------------------------------
@@ -39,22 +45,22 @@ public class AstPrinter implements Expr.Visitor<String>{
 		return buffer.toString();
 	}
 
-//	private String parenthesizePostOrder(String name, Expr... exprs) {
-//		StringBuffer buffer = new StringBuffer();
-//
-//		buffer.append("(");
-//		for (Expr expr : exprs) {
-//			buffer.append(expr.accept(this));
-//			buffer.append(" ");
-//		}
-//		buffer.append(name).append(")");
-//
-//		return buffer.toString();
-//	}
+	// private String parenthesizePostOrder(String name, Expr... exprs) {
+	// StringBuffer buffer = new StringBuffer();
+	//
+	// buffer.append("(");
+	// for (Expr expr : exprs) {
+	// buffer.append(expr.accept(this));
+	// buffer.append(" ");
+	// }
+	// buffer.append(name).append(")");
+	//
+	// return buffer.toString();
+	// }
 
 	public boolean isBalancedParantheses(String expr) {
-		if (expr.isEmpty()) { 
-			return true; 
+		if (expr.isEmpty()) {
+			return true;
 		}
 
 		Stack<Character> stack = new Stack<Character>();
@@ -64,19 +70,18 @@ public class AstPrinter implements Expr.Visitor<String>{
 				stack.push(current);
 			}
 			if (current == ')') {
-				if (stack.isEmpty()) { 
-					return false; 
+				if (stack.isEmpty()) {
+					return false;
 				}
 				char last = stack.peek();
 				if (current == ')' && last == '(') {
 					stack.pop();
-				}
-				else { 
-					return false; 
+				} else {
+					return false;
 				}
 			}
 		}
 
-		return stack.isEmpty()?true:false;
+		return stack.isEmpty() ? true : false;
 	}
 }

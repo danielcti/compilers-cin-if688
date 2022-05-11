@@ -37,7 +37,7 @@ public class Parser {
 		this.tokens = tokens;
 	}
 
-	//Parsing Expressions 
+	// Parsing Expressions
 	public Expr parse() {
 		try {
 			return expression();
@@ -51,13 +51,15 @@ public class Parser {
 	// -------------------------------------------------------------
 	private Expr expression() {
 		while (!isAtEnd()) {
-			if(this.match(TokenType.NUM)) {
+			if (this.match(TokenType.NUM)) {
 				this.stack.push(this.number());
 			}
 			// matching any of the operation tokens
-			else if(this.match(TokenType.PLUS, TokenType.MINUS, 
+			else if (this.match(TokenType.PLUS, TokenType.MINUS,
 					TokenType.SLASH, TokenType.STAR)) {
 				this.stack.push(this.binop());
+			} else if (this.match(TokenType.ID)) {
+				this.stack.push(this.id());
 			}
 			this.advance();
 		}
@@ -72,6 +74,10 @@ public class Parser {
 		return new Expr.Binop(this.stack.pop(), this.stack.pop(), this.peek());
 	}
 
+	private Expr id() {
+		return new Expr.Id(peek().lexeme);
+	}
+
 	private boolean match(TokenType... types) {
 		for (TokenType type : types) {
 			if (check(type)) {
@@ -83,12 +89,14 @@ public class Parser {
 	}
 
 	private boolean check(TokenType type) {
-		if (isAtEnd()) return false;
+		if (isAtEnd())
+			return false;
 		return peek().type == type;
 	}
 
 	private Token advance() {
-		if (!isAtEnd()) current++;
+		if (!isAtEnd())
+			current++;
 		return previous();
 	}
 

@@ -17,15 +17,23 @@
 package postfix.interpreter;
 
 import postfix.ast.Expr;
+import postfix.lexer.LexError;
+import java.util.HashMap;
 
 /**
  * @author Henrique Rebelo
  */
 public class Interpreter implements Expr.Visitor<Integer> {
 
-	public int interp(Expr expression) { 
+	public final HashMap<String, String> env;
+
+	public Interpreter(HashMap<String, String> env) {
+		this.env = env;
+	}
+
+	public int interp(Expr expression) {
 		int value = evaluate(expression);
-		
+
 		return value;
 	}
 
@@ -37,27 +45,38 @@ public class Interpreter implements Expr.Visitor<Integer> {
 	@Override
 	public Integer visitBinopExpr(Expr.Binop expr) {
 		int left = evaluate(expr.left);
-		int right = evaluate(expr.right); 
+		int right = evaluate(expr.right);
 		int result = 0;
 
 		switch (expr.operator.type) {
-		case PLUS:
-			result = left + right;
-			break;
-		case MINUS:
-			result = left - right;
-			break;
-		case SLASH:
-			result = left / right;
-			break;
-		case STAR:
-			result = left * right;
-			break;
-		default:
-			break;
+			case PLUS:
+				result = left + right;
+				break;
+			case MINUS:
+				result = left - right;
+				break;
+			case SLASH:
+				result = left / right;
+				break;
+			case STAR:
+				result = left * right;
+				break;
+			default:
+				break;
 		}
 
 		return result;
+	}
+
+	@Override
+	public Integer visitIdExpr(Expr.Id expr) throws LexError {
+		// System.out.print("INT ");
+		// System.out.println(Integer.parseInt(env.get(String.valueOf(expr.id))));
+		try {
+			return Integer.parseInt(env.get(String.valueOf(expr.id)));
+		} catch (Exception e) {
+			throw new LexError(String.valueOf(expr.id) + " cannot be resolved!\n");
+		}
 	}
 
 	private int evaluate(Expr expr) {

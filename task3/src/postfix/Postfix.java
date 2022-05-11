@@ -23,6 +23,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.HashMap;
 
 import postfix.ast.AstPrinter;
 import postfix.ast.Expr;
@@ -38,7 +39,7 @@ import postfix.parser.ParserError;
  */
 public class Postfix {
 
-	private static final Interpreter interpreter = new Interpreter();
+	private static final Interpreter interpreter = new Interpreter(new HashMap<String, String>());
 	private static boolean hasError = false;
 	private static boolean debugging = false;
 
@@ -49,32 +50,32 @@ public class Postfix {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-//		args = new String [1];
-//		args [0] = "../StackerPrograms/program/Calc1.stk";
-//		args [1] = "../StackerPrograms/program/Calc2.stk";
+		// args = new String [1];
+		// args [0] = "../StackerPrograms/program/Calc1.stk";
+		// args [1] = "../StackerPrograms/program/Calc2.stk";
 
 		debugging = false; // for interpretation phases
 		run(args, debugging);
 	}
 
 	/**
-	 * run by Interpretation the given program as 
+	 * run by Interpretation the given program as
 	 * a source file path
 	 * 
 	 * @param sourceFilePath to be interpreted
 	 */
 	private static void runFile(String sourceFilePath) throws IOException {
 		byte[] bytes = Files.readAllBytes(Paths.get(sourceFilePath));
-		String sourceProgram = 
-				new String(bytes, Charset.defaultCharset());
+		String sourceProgram = new String(bytes, Charset.defaultCharset());
 		run(sourceProgram);
 
 		// Indicate an error in the exit code.
-		if (hasError) System.exit(65); // exiting with non-zero code as should be
+		if (hasError)
+			System.exit(65); // exiting with non-zero code as should be
 	}
 
 	/**
-	 * Prompt where you can enter and execute code one 
+	 * Prompt where you can enter and execute code one
 	 * line at a time.
 	 * 
 	 * @throws IOException
@@ -83,10 +84,11 @@ public class Postfix {
 		InputStreamReader input = new InputStreamReader(System.in);
 		BufferedReader reader = new BufferedReader(input);
 
-		for (;;) { 
+		for (;;) {
 			System.out.print("> ");
 			String line = reader.readLine();
-			if (line == null) break;
+			if (line == null)
+				break;
 			run(line);
 			hasError = false;
 		}
@@ -99,11 +101,12 @@ public class Postfix {
 	 */
 	private static void run(String source) {
 		try {
+			interpreter.env.put("y", "100");
 			Scanner scanner = new Scanner(source);
 			List<Token> tokens = scanner.scan();
 
 			// debugging for tokens
-			if(debugging) {
+			if (debugging) {
 				printTokens(tokens);
 			}
 
@@ -111,18 +114,17 @@ public class Postfix {
 			Expr expr = parser.parse();
 
 			// debugging for parsing/ast
-			if(debugging) {
+			if (debugging) {
 				printAST(expr);
 			}
 			System.out.println(interpreter.interp(expr));
 		} catch (LexError e) {
 			error("Lex", e.getMessage());
 			hasError = true;
-		}	
-		catch (ParserError e) {
+		} catch (ParserError e) {
 			error("Parser", e.getMessage());
 			hasError = true;
-		}	
+		}
 	}
 
 	// -------------------------------------------------------------
@@ -130,18 +132,17 @@ public class Postfix {
 	// -------------------------------------------------------------
 	private static void run(String[] args, boolean debugging) throws IOException {
 		Postfix.debugging = debugging;
-		if(args.length > 0) {
+		if (args.length > 0) {
 			for (int i = 0; i < args.length; i++) {
 				runFile(args[i]);
 			}
-		}
-		else {
+		} else {
 			runPrompt();
 		}
 	}
 
 	private static void printAST(Expr expr) {
-		System.out.println("ast: "+new AstPrinter().print(expr));
+		System.out.println("ast: " + new AstPrinter().print(expr));
 		System.out.println();
 	}
 
