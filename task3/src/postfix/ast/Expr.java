@@ -69,7 +69,6 @@ public abstract class Expr {
 	// Variables expression
 	public static class Id extends Expr {
 		public Id(String lexeme) {
-			// System.out.println(lexeme);
 			this.id = lexeme;
 		}
 
