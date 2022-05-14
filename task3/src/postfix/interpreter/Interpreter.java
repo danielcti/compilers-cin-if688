@@ -73,7 +73,7 @@ public class Interpreter implements Expr.Visitor<Integer> {
 		try {
 			return Integer.parseInt(env.get(String.valueOf(expr.id)));
 		} catch (Exception e) {
-			throw new LexError(String.valueOf(expr.id) + " cannot be resolved!\n");
+			throw new LexError(String.valueOf(expr.id) + " cannot be resolved\n");
 		}
 	}
 

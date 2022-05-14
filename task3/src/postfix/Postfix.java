@@ -101,7 +101,7 @@ public class Postfix {
 	 */
 	private static void run(String source) {
 		try {
-			interpreter.env.put("x", "100");
+			interpreter.env.put("y", "10");
 			Scanner scanner = new Scanner(source);
 			List<Token> tokens = scanner.scan();
 
